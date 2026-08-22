@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Sweet Crust - Artisan Bakery</title>
+    <script src="https://cloudflare.com"></script>
+    <style>
+        :root {
+            --primary: #854d0e;
+            --primary-light: #fef08a;
+            --bg: #fafaf9;
+            --surface: #ffffff;
+            --text: #1c1917;
+            --text-muted: #78716c;
+            --border: #e7e5e4;
+            --radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cart-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .cart-count {
+            background: #ef4444;
+            color: white;
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 40px;
+            width: 100%;
+        }
+
+        @media (max-width: 900px) {
+            main {
+                grid-template-columns: 1fr;
+            }
+            .cart-sidebar {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: white;
+                box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+                max-height: 50vh;
+                overflow-y: auto;
+                z-index: 100;
+            }
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 24px;
+        }
+
+        .product-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .product-img-placeholder {
+            height: 180px;
+            background: #f5f5f4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+        }
+
+        .product-info {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .product-name {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .product-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            flex-grow: 1;
+        }
+
+        .product-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .product-price {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .add-btn {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .add-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .cart-sidebar {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            height: fit-content;
+        }
+
+        .cart-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .cart-items {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .cart-item-details {
+            max-width: 70%;
+        }
+
+        .cart-item-name {
+            font-weight: 600;
+        }
+
+        .cart-item-price {
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        .remove-item {
+            background: transparent;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+        }
+
+        .cart-summary {
+            border-top: 2px solid var(--border);
+            padding-top: 16px;
+            margin-bottom: 20px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .total-row {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text);
+            margin-top: 12px;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            background: #16a34a;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkout-btn:hover {
+            background: #15803d;
+        }
+
+        .empty-cart-text {
+            color: var(--text-muted);
+            text-align: center;
+            padding: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="nav-container">
+        <div class="logo">
+            <i data-lucide="cake"></i>
+            The Sweet Crust
+        </div>
+        <button class="cart-btn">
+            <i data-lucide="shopping-cart"></i>
+            Cart
+            <span class="cart-count" id="cart-count">0</span>
+        </button>
+    </div>
+</header>
+
+<main>
+    <div class="products-grid" id="products-grid">
+        <!-- Generated Dynamically -->
+    </div>
+
+    <div class="cart-sidebar">
+        <h2 class="cart-title">Your Order</h2>
+        <div class="cart-items" id="cart-items">
+            <div class="empty-cart-text">Your cart is empty</div>
+        </div>
+        <div class="cart-summary">
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <span id="subtotal">₹0.00</span>
+            </div>
+            <div class="summary-row">
+                <span>Estimated Tax (5%)</span>
+                <span id="tax">₹0.00</span>
+            </div>
+            <div class="summary-row total-row">
+                <span>Total</span>
+                <span id="total">₹0.00</span>
+            </div>
+        </div>
+        <button class="checkout-btn" id="checkout-btn" disabled>
+            <i data-lucide="credit-card"></i>
+            Proceed to Payment
+        </button>
+    </div>
+</main>
+
+<script>
+    const products = [
+        { id: 1, name: 'Sourdough Bread', desc: 'Freshly baked rustic country loaf.', price: 180, icon: 'bread' },
+        { id: 2, name: 'Chocolate Croissant', desc: 'Flaky French pastry filled with dark chocolate.', price: 120, icon: 'croissant' },
+        { id: 3, name: 'Strawberry Gateau', desc: 'Rich layers of cream and fresh strawberries.', price: 850, icon: 'cake' },
+        { id: 4, name: 'Blueberry Muffin', desc: 'Soft muffin packed with organic berries.', price: 90, icon: 'cookie' },
+        { id: 5, name: 'Almond Biscotti', desc: 'Crunchy Italian biscuits perfect for dipping.', price: 150, icon: 'candy' }
+    ];
+
+    let cart = [];
+
+    function renderProducts() {
+        const grid = document.getElementById('products-grid');
+        grid.innerHTML = products.map(p => `
+            <div class="product-card">
+                <div class="product-img-placeholder">
+                    <i data-lucide="cookie" style="width:48px; height:48px; opacity: 0.3;"></i>
+                </div>
+                <div class="product-info">
+                    <div class="product-name">${p.name}</div>
+                    <div class="product-desc">${p.desc}</div>
+                    <div class="product-meta">
+                        <span class="product-price">₹${p.price}</span>
+                        <button class="add-btn" onclick="addToCart(${p.id})">Add</button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        lucide.createIcons();
+    }
+
